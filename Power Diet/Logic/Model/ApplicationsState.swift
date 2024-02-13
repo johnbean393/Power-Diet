@@ -48,7 +48,7 @@ class ApplicationsState: ValueDataModel<Application> {
 				apps = apps + appUrls.map { url in
 					// Find stored QoS
 					let currQoS: QoS? = values.filter({ $0.url == url }).first?.qoS
-					let isHelper: Bool = !appDirs.map({ $0 == url.deletingLastPathComponent() }).contains(true)
+					let isHelper: Bool = url.deletingLastPathComponent().posixPath().contains(".app")
 					let isRunning: Bool = {
 						// Get list of running apps
 						let runningApps: [NSRunningApplication] = NSWorkspace.shared.runningApplications
