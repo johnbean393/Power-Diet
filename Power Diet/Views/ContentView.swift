@@ -44,7 +44,7 @@ struct ContentView: View {
 	
 	var qoSFilterMenu: some View {
 		Picker("", selection: $queryQos) {
-			Text("No Filter")
+			Text("All Apps")
 				.tag([QoS.userInteractive, QoS.background])
 			Text("P & E-Cores")
 				.tag([QoS.userInteractive])
