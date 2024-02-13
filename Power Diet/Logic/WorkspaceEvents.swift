@@ -22,7 +22,6 @@ class WorkspaceEvents {
 		// TODO: symmetricDifference has bad performance
 		let diff = Array(workspaceApps.symmetricDifference(previousValueOfRunningApps))
 		if change.kind == .insertion {
-			debugPrint("OS Event", "Apps Launched", diff.map { $0.bundleURL!.lastPathComponent }.first!)
 			if let appRemoved: NSRunningApplication = diff.first {
 				for (index, app) in ApplicationsState.shared.values.enumerated() {
 					if app.url == appRemoved.bundleURL {
@@ -31,7 +30,6 @@ class WorkspaceEvents {
 				}
 			}
 		} else if change.kind == .removal {
-			debugPrint("OS Event", "Apps Quit", diff.map { $0.bundleURL!.lastPathComponent }.first!)
 			if let appRemoved: NSRunningApplication = diff.first {
 				for (index, app) in ApplicationsState.shared.values.enumerated() {
 					if app.url == appRemoved.bundleURL {
