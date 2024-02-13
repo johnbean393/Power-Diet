@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ExtensionKit
 
 struct AppRowView: View {
 	
@@ -28,6 +29,9 @@ struct AppRowView: View {
 			.frame(maxWidth: 200)
 			.disabled(app.isRunning)
 		}
+		.contextMenu {
+			showInFinderButton
+		}
     }
 	
 	var launchQuitButton: some View {
@@ -49,6 +53,12 @@ struct AppRowView: View {
 					}
 					.foregroundStyle(Color.red)
 			}
+		}
+	}
+	
+	var showInFinderButton: some View {
+		Button("Show in Finder") {
+			FileSystemTools.openDirectory(url: app.url.deletingLastPathComponent())
 		}
 	}
 }

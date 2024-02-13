@@ -15,9 +15,51 @@ struct Application: Identifiable, Codable, Equatable, Hashable {
 	
 	var url: URL
 	
-	var execUrl: URL {
-		let execName: String = url.deletingPathExtension().lastPathComponent
-		return url.appendingPathComponent("Contents").appendingPathComponent("MacOS").appendingPathComponent(execName)
+	var execUrl: URL? {
+		do {
+			let execDir: URL = url.appendingPathComponent("Contents").appendingPathComponent("MacOS")
+			let appLayers: Int = Int((url.posixPath().count - url.posixPath().replacingOccurrences(of: ".app", with: "").count) / 4)
+			if execDir.fileExists() {
+				// Return executable url if exists
+				let execName: String = url.deletingPathExtension().lastPathComponent
+				if execDir.appendingPathComponent(execName).fileExists() {
+					return execDir.appendingPathComponent(execName)
+				} else {
+					// Else, get correct url
+					let execDirContents: [URL] = try FileManager.default.contentsOfDirectory(atPath: execDir.posixPath()).map({
+						execDir.appendingPathComponent($0)
+					})
+					if let execUrl = execDirContents.filter({
+						FileManager.default.isExecutableFile(atPath: $0.posixPath())
+						&& $0.pathExtension == ""
+						&& $0.lastPathComponent != "_CodeSignature"
+						&& ($0.posixPath().count - $0.posixPath().replacingOccurrences(of: ".app", with: "").count) == appLayers * 4
+					}).first {
+						return execUrl
+					}
+				}
+			} else {
+				// List all files in directory
+				let packageContents: [URL] = try url.listDirectory()
+				print(packageContents.filter({
+					FileManager.default.isExecutableFile(atPath: $0.posixPath())
+					&& $0.pathExtension == ""
+					&& $0.lastPathComponent != "_CodeSignature"
+					&& ($0.posixPath().count - $0.posixPath().replacingOccurrences(of: ".app", with: "").count) == appLayers * 4
+				}))
+				if let execUrl = packageContents.filter({
+					FileManager.default.isExecutableFile(atPath: $0.posixPath())
+					&& $0.pathExtension == ""
+					&& $0.lastPathComponent != "_CodeSignature"
+					&& ($0.posixPath().count - $0.posixPath().replacingOccurrences(of: ".app", with: "").count) == appLayers * 4
+				}).first {
+					return execUrl
+				}
+			}
+		} catch {
+			return nil
+		}
+		return nil
 	}
 	
 	var isHelper: Bool
@@ -46,7 +88,7 @@ struct Application: Identifiable, Codable, Equatable, Hashable {
 		return nil
 	}
 	
-	func launchWithQoS(completion: () -> Void) {
+	func launchWithQoS(completion: @escaping () -> Void) {
 		// Init process with params
 		let process: Process = Process()
 		process.qualityOfService = {
@@ -63,9 +105,13 @@ struct Application: Identifiable, Codable, Equatable, Hashable {
 					return .background
 			}
 		}()
-		process.executableURL = execUrl
+		process.executableURL = execUrl!
 		// Run app
-		try? process.run()
+		do {
+			try process.run()
+		} catch {
+			print(error)
+		}
 		// Run completion handler
 		completion()
 	}
