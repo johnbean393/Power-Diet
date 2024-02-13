@@ -29,6 +29,7 @@ struct Application: Identifiable, Codable, Equatable, Hashable {
 					let execDirContents: [URL] = try FileManager.default.contentsOfDirectory(atPath: execDir.posixPath()).map({
 						execDir.appendingPathComponent($0)
 					})
+					// Find all executables in directory and pick one
 					if let execUrl = execDirContents.filter({
 						FileManager.default.isExecutableFile(atPath: $0.posixPath())
 						&& $0.pathExtension == ""
@@ -41,12 +42,7 @@ struct Application: Identifiable, Codable, Equatable, Hashable {
 			} else {
 				// List all files in directory
 				let packageContents: [URL] = try url.listDirectory()
-				print(packageContents.filter({
-					FileManager.default.isExecutableFile(atPath: $0.posixPath())
-					&& $0.pathExtension == ""
-					&& $0.lastPathComponent != "_CodeSignature"
-					&& ($0.posixPath().count - $0.posixPath().replacingOccurrences(of: ".app", with: "").count) == appLayers * 4
-				}))
+				// Find all executables and pick one
 				if let execUrl = packageContents.filter({
 					FileManager.default.isExecutableFile(atPath: $0.posixPath())
 					&& $0.pathExtension == ""
