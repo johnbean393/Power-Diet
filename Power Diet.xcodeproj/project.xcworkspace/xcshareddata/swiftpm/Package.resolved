@@ -1,0 +1,23 @@
+{
+  "pins" : [
+    {
+      "identity" : "bezelnotification",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Yalir/BezelNotification.git",
+      "state" : {
+        "revision" : "68876d0e8c0ad09e0a1be8e7124b4f6c738df2c9",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "extensionkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/johnbean393/ExtensionKit",
+      "state" : {
+        "branch" : "main",
+        "revision" : "e9f4b834b57901206d19c1521e8a09f060ae3021"
+      }
+    }
+  ],
+  "version" : 2
+}
