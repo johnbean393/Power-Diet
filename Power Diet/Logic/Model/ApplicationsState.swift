@@ -31,9 +31,11 @@ class ApplicationsState: ValueDataModel<Application> {
 	
 	private func allApps() async -> [Application] {
 		// Declare scanned URLs
-		let systemAppDir: URL = URL(filePath: "/Applications/")
+		let rootAppDir: URL = URL(filePath: "/Applications/")
+		let systemAppDir: URL = URL(filePath: "/System/Applications/")
 		let userAppDir: URL = URL(filePath: "/Users/\(NSUserName())/Applications/")
 		let appDirs: [URL] = [
+			rootAppDir,
 			systemAppDir,
 			userAppDir
 		]
