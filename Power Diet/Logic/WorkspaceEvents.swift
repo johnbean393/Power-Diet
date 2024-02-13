@@ -22,17 +22,17 @@ class WorkspaceEvents {
 		// TODO: symmetricDifference has bad performance
 		let diff = Array(workspaceApps.symmetricDifference(previousValueOfRunningApps))
 		if change.kind == .insertion {
-			if let appRemoved: NSRunningApplication = diff.first {
+			if let appLaunched: NSRunningApplication = diff.first {
 				for (index, app) in ApplicationsState.shared.values.enumerated() {
-					if app.url == appRemoved.bundleURL {
+					if app.url == appLaunched.bundleURL {
 						ApplicationsState.shared.values[index].isRunning = true
 					}
 				}
 			}
 		} else if change.kind == .removal {
-			if let appRemoved: NSRunningApplication = diff.first {
+			if let appQuitted: NSRunningApplication = diff.first {
 				for (index, app) in ApplicationsState.shared.values.enumerated() {
-					if app.url == appRemoved.bundleURL {
+					if app.url == appQuitted.bundleURL {
 						ApplicationsState.shared.values[index].isRunning = false
 					}
 				}
